@@ -1,8 +1,7 @@
 # Invoice Analytics Dashboard - Final Submission
 
 ## 👨‍💻 Student Information
-- **Name:** [Your Name]
-- **Student ID:** [Your ID]
+- **Name:** Jatin Gautam
 - **Assignment:** Invoice Analytics Dashboard with AI Chat
 - **Submission Date:** November 8, 2025
 
@@ -11,7 +10,7 @@
 ## 🔗 Deliverables
 
 ### 1. GitHub Repository
-**URL:** `https://github.com/YOUR_USERNAME/invoice-analytics-dashboard`
+**URL:** `https://github.com/gautamjatin2205/invoice-analytics-dashboard`
 
 **Repository Structure:**
 ```
@@ -54,14 +53,15 @@ invoice-analytics-dashboard/
 
 | Service | URL | Status |
 |---------|-----|--------|
-| **Frontend Dashboard** | `https://YOUR-APP.vercel.app` | 🟢 Live |
-| **Backend API** | `https://YOUR-APP.vercel.app/api` | 🟢 Live |
-| **Vanna AI Service** | `https://YOUR-VANNA.onrender.com` | 🟢 Live |
+| **Frontend Dashboard** | `https://invoice-analytics-dashboard-web.vercel.app` | 🟢 Live |
+| **Backend API** | `https://invoice-analytics-dashboard.onrender.com` | 🟢 Live |
+| **Vanna AI Service** | `https://invoice-vanna-ai.onrender.com` | 🟢 Live |
 | **Database** | Railway PostgreSQL (Internal) | 🟢 Connected |
 
 **Test URLs:**
-- Health Check (API): `https://YOUR-APP.vercel.app/api/health`
-- Health Check (Vanna): `https://YOUR-VANNA.onrender.com/health`
+- Health Check (API): `https://invoice-analytics-dashboard.onrender.com/health`
+- Health Check (Vanna): `https://invoice-vanna-ai.onrender.com/`
+- Stats Endpoint: `https://invoice-analytics-dashboard.onrender.com/api/stats`
 
 ---
 
@@ -289,22 +289,25 @@ Deploy:    Vercel (Frontend/Backend) + Render (AI)
 
 ### Frontend (`apps/web/.env`)
 ```env
-NEXT_PUBLIC_API_BASE=/api
-NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
+NEXT_PUBLIC_API_BASE=https://invoice-analytics-dashboard.onrender.com/api
+NEXT_PUBLIC_APP_URL=https://invoice-analytics-dashboard-web.vercel.app
+DATABASE_URL=postgresql://postgres:VCjCeqQaQFFRcLsvYODujHLsKfhNcrss@tramway.proxy.rlwy.net:55012/railway
+VANNA_API_BASE_URL=https://invoice-vanna-ai.onrender.com
 ```
 
 ### Backend (`apps/api/.env`)
 ```env
-DATABASE_URL=postgresql://postgres:password@host:5432/invoice_analytics
-VANNA_API_BASE_URL=https://your-vanna.onrender.com
-PORT=3001
+DATABASE_URL=postgresql://postgres:VCjCeqQaQFFRcLsvYODujHLsKfhNcrss@tramway.proxy.rlwy.net:55012/railway
+VANNA_API_BASE_URL=https://invoice-vanna-ai.onrender.com
+PORT=10000
+NODE_ENV=production
 ```
 
 ### Vanna AI (`services/vanna/.env`)
 ```env
-DATABASE_URL=postgresql+psycopg://postgres:password@host:5432/invoice_analytics
+DATABASE_URL=postgresql://postgres:VCjCeqQaQFFRcLsvYODujHLsKfhNcrss@tramway.proxy.rlwy.net:55012/railway
 GROQ_API_KEY=your_groq_api_key_here
-ALLOWED_ORIGINS=https://your-app.vercel.app
+ALLOWED_ORIGINS=https://invoice-analytics-dashboard-web.vercel.app
 PORT=8000
 ```
 
@@ -364,25 +367,25 @@ npm run dev
 ### Production Testing
 
 1. **Dashboard Test:**
-   - Visit your Vercel URL
+   - Visit https://invoice-analytics-dashboard-web.vercel.app
    - Verify all 6 charts load
    - Check metrics display correct values
    - Test table search and pagination
 
 2. **API Test:**
    ```bash
-   curl https://your-app.vercel.app/api/health
-   # Should return: {"status":"ok"}
+   curl https://invoice-analytics-dashboard.onrender.com/health
+   # Should return: {"status":"ok","timestamp":"..."}
    ```
 
 3. **Vanna AI Test:**
    ```bash
-   curl https://your-vanna.onrender.com/health
-   # Should return: {"status":"healthy","database":"connected"}
+   curl https://invoice-vanna-ai.onrender.com/
+   # Should return: {"service":"Vanna AI Service","version":"1.0.0"...}
    ```
 
 4. **Chat Test:**
-   - Go to "Chat with Data" tab
+   - Go to "Chat with Data" tab at https://invoice-analytics-dashboard-web.vercel.app
    - Try these queries:
      - "What is the total revenue?"
      - "Show me invoices from October 2024"
@@ -479,12 +482,12 @@ npm run dev
 
 ## 📞 Support & Contact
 
-**GitHub Repository:** https://github.com/YOUR_USERNAME/invoice-analytics-dashboard
-**Issues:** https://github.com/YOUR_USERNAME/invoice-analytics-dashboard/issues
+**GitHub Repository:** https://github.com/gautamjatin2205/invoice-analytics-dashboard
+**Issues:** https://github.com/gautamjatin2205/invoice-analytics-dashboard/issues
 
 For questions or support:
-- **Email:** your.email@example.com
-- **GitHub:** @YOUR_USERNAME
+- **Email:** gautamjatin2205@gmail.com
+- **GitHub:** @gautamjatin2205
 
 ---
 
