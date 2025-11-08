@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id          String       @id @default(cuid())
+  name        String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  departments Department[]
+  documents   Document[]
+  users       User[]
+
+  @@map("organizations")
+}
+
+model Department {
+  id             String       @id @default(cuid())
+  name           String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  documents      Document[]
+
+  @@map("departments")
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String?      @unique
+  name           String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  uploadedDocs   Document[]   @relation("UploadedBy")
+  assignedDocs   Document[]   @relation("AssignedTo")
+
+  @@map("users")
+}
+
+model Document {
+  id                  String      @id @default(uuid())
+  name                String
+  filePath            String
+  fileSize            BigInt
+  fileType            String
+  status              String      @default("pending")
+  organizationId      String
+  organization        Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  departmentId        String
+  department          Department   @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  uploadedById        String
+  uploadedBy          User         @relation("UploadedBy", fields: [uploadedById], references: [id])
+  assignedToId        String?
+  assignedTo          User?        @relation("AssignedTo", fields: [assignedToId], references: [id])
+  assignedAt          DateTime?
+  isValidatedByHuman  Boolean      @default(false)
+  processedAt         DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  analyticsId         String?
+  invoice             Invoice?
+  vendor              Vendor?
+  customer            Customer?
+  payment             Payment?
+  lineItems           LineItem[]
+
+  @@index([organizationId])
+  @@index([departmentId])
+  @@index([uploadedById])
+  @@index([status])
+  @@index([analyticsId])
+  @@map("documents")
+}
+
+model Invoice {
+  id           String    @id @default(uuid())
+  documentId   String    @unique
+  document     Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  invoiceId    String?
+  invoiceDate  DateTime?
+  deliveryDate DateTime?
+  subTotal     Float?
+  totalTax     Float?
+  invoiceTotal Float?
+  currencySymbol String?
+  documentType String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([documentId])
+  @@index([invoiceDate])
+  @@map("invoices")
+}
+
+model Vendor {
+  id                  String   @id @default(uuid())
+  documentId          String   @unique
+  document            Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  vendorName          String?
+  vendorPartyNumber   String?
+  vendorAddress       String?
+  vendorTaxId         String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([documentId])
+  @@index([vendorName])
+  @@map("vendors")
+}
+
+model Customer {
+  id              String   @id @default(uuid())
+  documentId      String   @unique
+  document        Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  customerName    String?
+  customerAddress String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([documentId])
+  @@map("customers")
+}
+
+model Payment {
+  id                  String   @id @default(uuid())
+  documentId          String   @unique
+  document            Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  dueDate             DateTime?
+  paymentTerms        String?
+  bankAccountNumber   String?
+  bic                 String?
+  accountName         String?
+  netDays             Int?
+  discountPercentage  String?
+  discountDays        Int?
+  discountDueDate     DateTime?
+  discountedTotal     String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([documentId])
+  @@index([dueDate])
+  @@map("payments")
+}
+
+model LineItem {
+  id          String   @id @default(uuid())
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  srNo        Int?
+  description String?
+  quantity    Float?
+  unitPrice   Float?
+  totalPrice  Float?
+  category    String?  @default("Operations")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([documentId])
+  @@index([category])
+  @@map("line_items")
+}
